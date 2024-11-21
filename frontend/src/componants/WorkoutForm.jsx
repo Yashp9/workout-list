@@ -2,27 +2,32 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { createWorkouts } from '../features/workoutSlice';
+import { useAuth } from '../hooks/useAuth';
 
 
 const WorkoutForm = () => {
+    const {user}= useAuth();
     const [title,setTitle] = useState('');
     const [load,setLoad] = useState('');
     const [reps,setReps] = useState('');
     const [error,setError] = useState(null); 
     const dispatch = useDispatch();
+
     const handler = async (e)=>{
         e.preventDefault();
+        if(!user){
+            setError('you must login first');
+            return;
+        }
         const workout = {title , load , reps};
         try {
             const response = await axios.post("http://localhost:4000/api/workout",workout,{
                 headers:{
                     "Content-Type":'application/json',
+                    'Authorization':`Bearer ${user.token}`
                 },
             });
             setError(null);
-            setTitle('');
-            setLoad('');
-            setReps('');
             console.log("New work out added",response.data);
             dispatch(createWorkouts(response.data));
         } catch (error) {
@@ -32,7 +37,7 @@ const WorkoutForm = () => {
     }
   return (
     <form className='create' onSubmit={handler}>
-        <h3 style={{color:'#1aac83'}} >Adda a new Workout</h3>
+        <h3 style={{color:'#1aac83'}} >Add a new Workout</h3>
         <label>Exercise Title : </label>
         <input type='text'
         onChange={(e)=>setTitle(e.target.value)}

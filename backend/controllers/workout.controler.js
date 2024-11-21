@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 //get all workouts
 const getAllWorkouts = async (req, res) => {
   try {
-    const allWorkouts = await workout.find({}); // Ensure the 'workout' model is correctly imported and available
+    const user_id=req.user._id.toString();
+    const allWorkouts = await workout.find({user_id}); // Ensure the 'workout' model is correctly imported and available
     if (allWorkouts.length > 0) {
       // If workouts exist, return them as JSON
       return res.status(200).json(allWorkouts);
@@ -50,7 +51,8 @@ const createWorkout = async (req, res) => {
       throw new Error("please enter all the properties");
     }
     //add doc to db.
-    const newworkout = new workout({ title, load, reps });
+    const user_id = req.user._id.toString();
+    const newworkout = new workout({ title, load, reps ,user_id});
     await newworkout.save();
     res.status(201).json(newworkout);
   } catch (error) {

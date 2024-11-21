@@ -3,14 +3,23 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { deleteWorkouts } from "../features/workoutSlice";
 import {formatDistanceToNow} from 'date-fns';
+import { useAuth } from "../hooks/useAuth";
 
 const WorkoutDetails = ({ workout }) => {
+  const {user}=useAuth();
   const dispatch = useDispatch();
   const handleClick = async (e) => {
     e.preventDefault();
+    if(!user){
+      return
+    }
     try {
       const response = await axios.delete(
-        `http://localhost:4000/api/workout/${workout._id}`
+        `http://localhost:4000/api/workout/${workout._id}`,{
+          headers:{
+           'Authorization':`Bearer ${user.token}`
+          }
+        }
       );
       dispatch(deleteWorkouts(response.data));
     } catch (error) {

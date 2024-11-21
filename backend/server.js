@@ -1,9 +1,11 @@
 require('dotenv').config();
-
 const express = require('express');
 const workoutrouter = require('./routes/workout');
+const userRouter = require('./routes/user')
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+
 //routes
 const app = express()
 const corsoption = {
@@ -14,7 +16,11 @@ const corsoption = {
 app.use(cors(corsoption));
 app.use(express.json());
 
+//workout 
 app.use('/api/workout',workoutrouter);
+
+//authentication
+app.use('/api/user',userRouter);
 
 console.log(process.env.PORT)
 
